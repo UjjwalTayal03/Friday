@@ -1,8 +1,16 @@
-import { contextBridge } from 'electron'
+import { contextBridge ,ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
-const api = {}
+const api = {
+  openFolder: () => ipcRenderer.invoke('open-folder'),
+
+  readFolder: (folderPath: string) =>
+    ipcRenderer.invoke('read-folder', folderPath),
+
+  readFile: (filePath: string) =>
+    ipcRenderer.invoke('read-file', filePath)
+}
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

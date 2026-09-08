@@ -1,7 +1,9 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
+import { readdir, readFile  } from 'fs/promises'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+
 
 function createWindow(): void {
   // Create the browser window.
@@ -50,7 +52,35 @@ app.whenReady().then(() => {
   })
 
   // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  ipcMain.handle('open-folder', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory']
+  })
+
+  if (result.canceled) {
+    return null
+  }
+
+  return result.filePaths[0]
+})
+
+ipcMain.handle('read-folder', async (_, folderPath) => {
+  const entries = await readdir(folderPath, {
+    withFileTypes: true
+  })
+
+  return entries.map((entry) => ({
+    name: entry.name,
+    isDirectory: entry.isDirectory(),
+    path: join(folderPath, entry.name)
+  }))
+})
+
+ipcMain.handle('read-file', async (_, filePath) => {
+  const content = await readFile(filePath, 'utf-8')
+
+  return content
+})
 
   createWindow()
 

@@ -42,9 +42,15 @@
 .assistant {
   min-width: 0;
   min-height: 0;
-
   border-right: 1px solid #292d35;
 }
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 
 .assistant {
   border-right: none;
@@ -116,5 +122,80 @@
 
   color: #5ee68a;
   font-family: monospace;
+  font-size: 13px;
+}
+
+.file-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.file-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.file-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.file-list::-webkit-scrollbar-thumb {
+  background: #292d35;
+  border-radius: 4px;
+}
+
+.file-list::-webkit-scrollbar-thumb:hover {
+  background: #3a404b;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.file-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.file-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.file-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.file-list::-webkit-scrollbar-thumb {
+  background: #292d35;
+  border-radius: 4px;
+}
+
+.file-list::-webkit-scrollbar-thumb:hover {
+  background: #3a404b;
+}
+
+.file {
+  padding: 6px 14px;
+  color: #c9ced6;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.file:hover {
+  background: #1b1f27;
+}
+
+.empty-editor {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5f6672;
   font-size: 13px;
 }

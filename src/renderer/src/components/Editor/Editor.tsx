@@ -1,29 +1,58 @@
 import '../../monaco'
 import Editor from '@monaco-editor/react'
 
-function CodeEditor(): React.JSX.Element {
+type EditorProps = {
+  fileName: string | null
+  fileContent: string
+}
+
+function getLanguage(fileName: string | null): string {
+  if (!fileName) return 'plaintext'
+
+  if (fileName.endsWith('.ts')) return 'typescript'
+  if (fileName.endsWith('.tsx')) return 'typescript'
+  if (fileName.endsWith('.js')) return 'javascript'
+  if (fileName.endsWith('.jsx')) return 'javascript'
+  if (fileName.endsWith('.json')) return 'json'
+  if (fileName.endsWith('.css')) return 'css'
+  if (fileName.endsWith('.html')) return 'html'
+  if (fileName.endsWith('.md')) return 'markdown'
+
+  return 'plaintext'
+}
+
+function CodeEditor({
+  fileName,
+  fileContent
+}: EditorProps): React.JSX.Element {
   return (
     <section className="editor">
-      <div className="panel-title">EDITOR</div>
+      <div className="panel-title">
+        EDITOR
+      </div>
 
       <div className="editor-content">
-        <Editor
-          height="100%"
-          defaultLanguage="typescript"
-          defaultValue={`function greet(name: string) {
-  return \`Hello \${name}\`;
-}`}
-          theme="vs-dark"
-          options={{
-            minimap: {
-              enabled: false
-            },
-            fontSize: 14,
-            padding: {
-              top: 16
-            }
-          }}
-        />
+        {!fileName ? (
+          <div className="empty-editor">
+            Open a file to start editing
+          </div>
+        ) : (
+          <Editor
+            height="100%"
+            language={getLanguage(fileName)}
+            value={fileContent}
+            theme="vs-dark"
+            options={{
+              minimap: {
+                enabled: false
+              },
+              fontSize: 14,
+              padding: {
+                top: 16
+              }
+            }}
+          />
+        )}
       </div>
     </section>
   )
