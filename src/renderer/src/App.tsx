@@ -6,19 +6,46 @@ import Assistant from './components/Assistant/Assistant'
 import Terminal from './components/Terminal/Terminal'
 import { useState } from 'react'
 
-function App(): React.JSX.Element {
-  const [openFile, setOpenFile] = useState<string | null>(null)
-const [fileContent, setFileContent] = useState('')
-
-const handleFileOpen = async (
-  filePath: string,
-  fileName: string
-) => {
-  const content = await window.api.readFile(filePath)
-
-  setOpenFile(fileName)
-  setFileContent(content)
+type OpenFile = {
+  path: string
+  name: string
+  content: string
 }
+
+function App(): React.JSX.Element {
+  const [openFile, setOpenFile] = useState<OpenFile | null>(null)
+
+  const [openFiles, setOpenFiles] = useState<
+    Record<string, OpenFile>
+  >({})
+
+  const handleFileOpen = async (
+    filePath: string,
+    fileName: string
+  ) => {
+    const existingFile = openFiles[filePath]
+
+    if (existingFile) {
+      setOpenFile(existingFile)
+      return
+    }
+
+    const content = await window.api.readFile(filePath)
+
+    const file: OpenFile = {
+      path: filePath,
+      name: fileName,
+      content
+    }
+
+    setOpenFiles((previous) => ({
+      ...previous,
+      [filePath]: file
+    }))
+
+    setOpenFile(file)
+  }
+
   return (
     <div className="app">
       <header className="topbar">
@@ -28,11 +55,29 @@ const handleFileOpen = async (
 
       <main className="workspace">
         <Sidebar onFileOpen={handleFileOpen} />
-        
+
         <Editor
-  fileName={openFile}
-  fileContent={fileContent}
-/>
+          fileName={openFile?.name ?? null}
+          fileContent={openFile?.content ?? ''}
+          onChange={(value) => {
+            setOpenFile((previous) => {
+              if (!previous) return previous
+
+              const updatedFile = {
+                ...previous,
+                content: value
+              }
+
+              setOpenFiles((files) => ({
+                ...files,
+                [previous.path]: updatedFile
+              }))
+
+              return updatedFile
+            })
+          }}
+        />
+
         <Assistant />
       </main>
 

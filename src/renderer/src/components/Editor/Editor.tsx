@@ -4,6 +4,7 @@ import Editor from '@monaco-editor/react'
 type EditorProps = {
   fileName: string | null
   fileContent: string
+  onChange: (value: string) => void
 }
 
 function getLanguage(fileName: string | null): string {
@@ -23,7 +24,8 @@ function getLanguage(fileName: string | null): string {
 
 function CodeEditor({
   fileName,
-  fileContent
+  fileContent,
+  onChange
 }: EditorProps): React.JSX.Element {
   return (
     <section className="editor">
@@ -41,6 +43,9 @@ function CodeEditor({
             height="100%"
             language={getLanguage(fileName)}
             value={fileContent}
+            onChange={(value) => {
+              onChange(value ?? '')
+            }}
             theme="vs-dark"
             options={{
               minimap: {
