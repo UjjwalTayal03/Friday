@@ -1,6 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
-import { readdir, readFile  } from 'fs/promises'
+import { readdir, readFile, writeFile   } from 'fs/promises'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
@@ -80,6 +80,12 @@ ipcMain.handle('read-file', async (_, filePath) => {
   const content = await readFile(filePath, 'utf-8')
 
   return content
+})
+
+ipcMain.handle('write-file', async (_, filePath, content) => {
+  await writeFile(filePath, content, 'utf-8')
+
+  return true
 })
 
   createWindow()

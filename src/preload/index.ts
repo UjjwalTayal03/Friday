@@ -9,7 +9,10 @@ const api = {
     ipcRenderer.invoke('read-folder', folderPath),
 
   readFile: (filePath: string) =>
-    ipcRenderer.invoke('read-file', filePath)
+    ipcRenderer.invoke('read-file', filePath),
+
+  writeFile: (filePath: string, content: string) =>
+  ipcRenderer.invoke('write-file', filePath, content)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

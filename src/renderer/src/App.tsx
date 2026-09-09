@@ -19,6 +19,31 @@ function App(): React.JSX.Element {
     Record<string, OpenFile>
   >({})
 
+  const handleSave = async (content: string) => {
+  if (!openFile) return
+
+  await window.api.writeFile(
+    openFile.path,
+    content
+  )
+
+  setOpenFile((previous) => {
+    if (!previous) return previous
+
+    const updatedFile = {
+      ...previous,
+      content
+    }
+
+    setOpenFiles((files) => ({
+      ...files,
+      [previous.path]: updatedFile
+    }))
+
+    return updatedFile
+  })
+}
+
   const handleFileOpen = async (
     filePath: string,
     fileName: string
@@ -58,6 +83,7 @@ function App(): React.JSX.Element {
 
         <Editor
           fileName={openFile?.name ?? null}
+          onSave={handleSave}
           fileContent={openFile?.content ?? ''}
           onChange={(value) => {
             setOpenFile((previous) => {
