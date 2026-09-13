@@ -10,6 +10,8 @@ type OpenFile = {
   path: string
   name: string
   content: string
+  isDirty: boolean
+
 }
 
 function App(): React.JSX.Element {
@@ -22,26 +24,31 @@ function App(): React.JSX.Element {
   const handleSave = async (content: string) => {
   if (!openFile) return
 
-  await window.api.writeFile(
-    openFile.path,
-    content
-  )
-
-  setOpenFile((previous) => {
-    if (!previous) return previous
-
-    const updatedFile = {
-      ...previous,
+  try {
+    await window.api.writeFile(
+      openFile.path,
       content
-    }
-
-    setOpenFiles((files) => ({
-      ...files,
-      [previous.path]: updatedFile
-    }))
-
-    return updatedFile
-  })
+    )
+  
+    setOpenFile((previous) => {
+      if (!previous) return previous
+  
+      const updatedFile = {
+        ...previous,
+        content,
+        isDirty: false
+      }
+  
+      setOpenFiles((files) => ({
+        ...files,
+        [previous.path]: updatedFile
+      }))
+  
+      return updatedFile
+    })
+  } catch (error) {
+    console.error('Failed to save file:', error)
+  }
 }
 
   const handleFileOpen = async (
@@ -60,7 +67,8 @@ function App(): React.JSX.Element {
     const file: OpenFile = {
       path: filePath,
       name: fileName,
-      content
+      content,
+      isDirty: false
     }
 
     setOpenFiles((previous) => ({
@@ -84,6 +92,7 @@ function App(): React.JSX.Element {
         <Editor
           fileName={openFile?.name ?? null}
           onSave={handleSave}
+          isDirty={openFile?.isDirty ?? false}
           fileContent={openFile?.content ?? ''}
           onChange={(value) => {
             setOpenFile((previous) => {
@@ -91,7 +100,8 @@ function App(): React.JSX.Element {
 
               const updatedFile = {
                 ...previous,
-                content: value
+                content: value,
+                isDirty: true
               }
 
               setOpenFiles((files) => ({

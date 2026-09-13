@@ -7,6 +7,7 @@ type EditorProps = {
   fileContent: string
   onChange: (value: string) => void
   onSave: (content: string) => void
+  isDirty: boolean
 }
 
 function getLanguage(fileName: string | null): string {
@@ -28,13 +29,21 @@ function CodeEditor({
   fileName,
   fileContent,
   onChange,
-  onSave
+  onSave,
+  isDirty
 }: EditorProps): React.JSX.Element {
   return (
     <section className="editor">
       <div className="panel-title">
-        EDITOR
-      </div>
+  <span>EDITOR</span>
+
+  {fileName && (
+    <span className="editor-file-name">
+      {fileName}
+      {isDirty && ' *'}
+    </span>
+  )}
+</div>
       <button onClick={() => onSave(fileContent)}>
   Save
 </button>
